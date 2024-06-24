@@ -29,3 +29,4 @@ variable "db_password" {
   description = "Password for RDS MySQL database"
   default     = "your_password" // Replace with your database password
 }
+
