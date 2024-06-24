@@ -22,14 +22,17 @@ Initialize Terraform:
 
 Navigate to the directory containing main.tf.
 Run terraform init to initialize Terraform and download necessary plugins.
+
 Review and Apply Changes:
 
 Run terraform plan to review the execution plan and verify the changes that will be made.
 If satisfied, run terraform apply and confirm by typing yes when prompted to apply the changes and deploy AWS resources.
+
 Monitor Deployment:
 
 Terraform will provision the defined AWS resources (VPC, Subnet, EC2 Instance, RDS Database, ELB) based on the configuration in main.tf.
 Monitor the terminal for progress updates and any error messages during resource creation.
+
 Accessing Resources:
 
 After successful deployment, Terraform will output information such as the EC2 instance's public IP (web_instance), RDS database endpoint (rds_endpoint), and ELB DNS name (elb_dns_name).
