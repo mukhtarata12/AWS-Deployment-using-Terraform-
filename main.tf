@@ -2,10 +2,10 @@
 
 // Configure AWS provider
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
-# Define VPC
+// Define VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
   enable_dns_support = true
@@ -16,7 +16,7 @@ resource "aws_vpc" "main" {
   }
 }
 
-# Create internet gateway
+// Create internet gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
 
@@ -25,7 +25,7 @@ resource "aws_internet_gateway" "gw" {
   }
 }
 
-# Define public subnet
+// Define public subnet
 resource "aws_subnet" "public_subnet" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
@@ -36,7 +36,7 @@ resource "aws_subnet" "public_subnet" {
   }
 }
 
-# Create security group for web servers
+// Create security group for web servers
 resource "aws_security_group" "web_sg" {
   vpc_id = aws_vpc.main.id
 
@@ -59,12 +59,12 @@ resource "aws_security_group" "web_sg" {
   }
 }
 
-# Launch EC2 instance
+// Launch EC2 instance
 resource "aws_instance" "web_server" {
-  ami           = "ami-0c55b159cbfafe1f0"  // Amazon Linux 2 AMI
-  instance_type = "t2.micro"
+  ami           = var.ami_id
+  instance_type = var.instance_type
   subnet_id     = aws_subnet.public_subnet.id
-  key_name      = "your_key_pair_name"  // Replace with your key pair name
+  key_name      = var.key_pair_name
   security_groups = [aws_security_group.web_sg.id]
 
   tags = {
@@ -72,7 +72,7 @@ resource "aws_instance" "web_server" {
   }
 }
 
-# Create RDS MySQL database
+// Create RDS MySQL database
 resource "aws_db_instance" "my_database" {
   identifier           = "mydbinstance"
   allocated_storage    = 20
@@ -81,12 +81,12 @@ resource "aws_db_instance" "my_database" {
   instance_class       = "db.t2.micro"
   name                 = "mydatabase"
   username             = "admin"
-  password             = "your_password"  // Replace with your database password
+  password             = var.db_password
   parameter_group_name = "default.mysql5.7"
   publicly_accessible  = false
 }
 
-# Create Elastic Load Balancer
+// Create Elastic Load Balancer
 resource "aws_elb" "web_elb" {
   name               = "web-elb"
   security_groups    = [aws_security_group.web_sg.id]
@@ -108,7 +108,7 @@ resource "aws_elb" "web_elb" {
   }
 }
 
-# Output for EC2 instance, RDS endpoint, and ELB DNS name
+// Output for EC2 instance, RDS endpoint, and ELB DNS name
 output "web_instance" {
   value = aws_instance.web_server.public_ip
 }
